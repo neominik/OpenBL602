@@ -351,7 +351,10 @@ a lot of data that needs to be copied, this should be set high. */
 #elif defined(CFG_CHIP_BL606P)
 #define LWIP_TCPIP_CORE_LOCKING         1
 #else
-#define LWIP_TCPIP_CORE_LOCKING         0
+/* OpenBeken calls the raw MQTT/TCP API from its own threads and serializes those calls
+   with LOCK_TCPIP_CORE(). Without core locking that macro is empty and they race with
+   tcpip_thread (corrupted MQTT output, stuck connections, crashes). */
+#define LWIP_TCPIP_CORE_LOCKING         1
 #endif
 #define LWIP_SOCKET_SET_ERRNO           1
 #define SO_REUSE                        1
